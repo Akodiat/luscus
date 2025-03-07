@@ -1,5 +1,5 @@
-# luscus
-A web-based version of [Luscus for MOLCAS] (https://sourceforge.net/projects/luscus/).
+# Luscus
+A web-based version of [Luscus for MOLCAS](https://sourceforge.net/projects/luscus/).
 
 Made by Joakim Bohlin, InfraVis.
 

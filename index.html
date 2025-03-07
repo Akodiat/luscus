@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Luscus</title>
+
+        <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
+        <link rel="stylesheet" href="main.css">
+
+        <script src="https://cdn.jsdelivr.net/npm/vega@5.25.0"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.16.3"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.22.2"></script>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+        <html data-theme="light"></html>
+    </head>
+    <body style="margin: 0">
+        <div class="dialog" data-role="dialog" id="dataLoadDialog">
+            <div class="dialog-title">Load data</div>
+            <div class="dialog-content">
+                <label for="fileInput">Upload data here:
+                    <input type="file" id="fileInput" data-role="file" data-mode="drop" accept=".lus" multiple/>
+                </label>
+            </div>
+            <div class="dialog-actions">
+                <button class="button js-dialog-close">Cancel</button>
+                <button class="button primary js-dialog-close" id="dataLoadButton">Load</button>
+            </div>
+        </div>
+        <aside class="sidebar pos-absolute z-2" data-role="sidebar" data-toggle="#sidebar-toggle-2" data-shift=".shifted-content">
+            <div class="sidebar-header bg-grayMouse">
+                <span class="title fg-white">Luscus</span>
+                <span class="subtitle fg-white">A web-based version of <a href="https://sourceforge.net/projects/luscus/"> Luscus for MOLCAS</a><br>Developed by Joakim Bohlin, InfraVis</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="./docs/"><span class="mif-book-reference icon"></span>Documentation</a></li>
+                <li><a href="https://github.com/Akodiat/luscus"><span class="mif-github icon"></span>Source code</a></li>
+            </ul>
+        </aside>
+        <nav data-role="ribbonmenu" class="shifted-content">
+            <ul class="tabs-holder">
+                <li class="static" id="sidebar-toggle-2"><a href="#">About</a></li>
+                <li><a href="#section-file">File</a></li>
+                <li><a href="#section-view">Edit</a></li>
+                <li><a href="#section-view">View</a></li>
+            </ul>
+
+            <div class="content-holder">
+                <div class="section" id="section-file">
+                    <button class="ribbon-button primary" onclick="Metro.dialog.open('#dataLoadDialog')">
+                        <span class="mif-folder-open mif-4x"></span>
+                        <span class="caption">Load data</span>
+                    </button>
+
+                        <button class="ribbon-button" onclick="api.exportImage()" title="Save current view as an image">
+                            <span class="mif-photo-camera mif-2x"></span>
+                            <span class="caption">Image</span>
+                        </button>
+                        <button class="ribbon-button dropdown-toggle">
+                        </button>
+                        <ul class="ribbon-dropdown" data-role="dropdown" data-duration="100">
+                            <label>Scaling factor: </label>
+                            <input style="width: 2em;" type="text" data-role="spinner" class="input-small" value="2" id="exportImageScalingFactor"
+                                title="Factor with which to scale the current canvas." min=1
+                            >
+                        </ul>
+
+                    <button class="ribbon-button" onclick="api.exportGLTF()">
+                        <span class="mif-download mif-2x"></span>
+                        <span class="caption">glTF</span>
+                    </button>
+
+                    <button class="ribbon-button" onclick="api.showVideoExportWindow()">
+                        <span class="mif-video-camera mif-2x"></span>
+                        <span class="caption">Video</span>
+                    </button>
+
+                </div>
+
+                <div class="section" id="section-edit">
+                    Nothing here yet
+                </div>
+
+                <div class="section" id="section-view">
+                    Nothing here yet
+                </div>
+            </div>
+        </nav>
+
+        <div id="container"></div>
+
+        <div id="noDataMessage">No data loaded</div>
+
+        <!-- Import maps polyfill -->
+        <!-- Remove this when import maps will be widely supported -->
+        <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.module.js",
+                    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/"
+                }
+            }
+        </script>
+
+        <script src="libs/CCapture.all.min.js"></script>
+        <script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+        <script type="module" src="main.js"></script>
+    </body>
+</html>

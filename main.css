@@ -1,0 +1,35 @@
+#noDataMessage {
+    font-size: large;
+    position: absolute;
+    bottom: 50%;
+    color: gray;
+    text-align: center;
+    width: 100%;
+    z-index: -1;
+}
+
+#container {
+    cursor: pointer;
+}
+
+.select .option-list a {
+    padding: 0 0.5rem 0 0.5rem;
+}
+
+.input input {
+    padding: 0 .2rem;
+}
+
+.paddedRibbonForm {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.ribbon-menu {
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+}
+.ribbon-menu .tabs-holder {
+    background-color: #f5f6f7cf;
+}

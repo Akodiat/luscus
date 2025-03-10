@@ -102,7 +102,7 @@ class Api {
 
 </div>
 <div class="form-group">
-    <input type="number" value="10" id="videoFramerate" data-role="input" data-prepend="Frame rate" data-append="fps">
+    <input type="number" value="24" id="videoFramerate" data-role="input" data-prepend="Frame rate" data-append="fps">
     <small class="text-muted">Number of frames per second (used for webm and gif)</small>
 </div>
 <div class="form-group">

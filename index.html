@@ -50,21 +50,26 @@
                 <div class="section" id="section-file">
                     <button class="ribbon-button primary" onclick="Metro.dialog.open('#dataLoadDialog')">
                         <span class="mif-folder-open mif-4x"></span>
-                        <span class="caption">Load data</span>
+                        <span class="caption">Open</span>
                     </button>
 
-                        <button class="ribbon-button" onclick="api.exportImage()" title="Save current view as an image">
-                            <span class="mif-photo-camera mif-2x"></span>
-                            <span class="caption">Image</span>
-                        </button>
-                        <button class="ribbon-button dropdown-toggle">
-                        </button>
-                        <ul class="ribbon-dropdown" data-role="dropdown" data-duration="100">
-                            <label>Scaling factor: </label>
-                            <input style="width: 2em;" type="text" data-role="spinner" class="input-small" value="2" id="exportImageScalingFactor"
-                                title="Factor with which to scale the current canvas." min=1
-                            >
-                        </ul>
+                    <button class="ribbon-button" onclick="api.saveLuscusFile()">
+                        <span class="mif-floppy-disk mif-2x"></span>
+                        <span class="caption">Save</span>
+                    </button>
+
+                    <button class="ribbon-button" onclick="api.exportImage()" title="Save current view as an image">
+                        <span class="mif-photo-camera mif-2x"></span>
+                        <span class="caption">Image</span>
+                    </button>
+                    <button class="ribbon-button dropdown-toggle">
+                    </button>
+                    <ul class="ribbon-dropdown" data-role="dropdown" data-duration="100">
+                        <label>Scaling factor: </label>
+                        <input style="width: 2em;" type="text" data-role="spinner" class="input-small" value="2" id="exportImageScalingFactor"
+                            title="Factor with which to scale the current canvas." min=1
+                        >
+                    </ul>
 
                     <button class="ribbon-button" onclick="api.exportGLTF()">
                         <span class="mif-download mif-2x"></span>

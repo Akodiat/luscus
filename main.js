@@ -1,20 +1,10 @@
 import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {Api} from "./src/api.js";
-import {loadData} from "./src/fileHandler.js";
-import { drawInstances } from "./src/draw.js";
+import {loadData} from "./src/fileReader.js";
+import {drawInstances} from "./src/draw.js";
+import {atomConstants, defaultAtomColor, defaultAtomRadius} from "./src/constants.js";
 
-const atomConstants = {
-    "H": {radius: 0.32, color: new THREE.Color(0xF2F2F2)},
-    "C": {radius: 0.53, color: new THREE.Color(0x555555)},
-    "O": {radius: 0.56, color: new THREE.Color(0xF32E42)},
-    "Si": {radius: 0.65, color: new THREE.Color(0xF0C8A0)},
-    "Cr": {radius: 0.76, color: new THREE.Color(0x8A99C7)},
-    "F": {radius: 0.59, color: new THREE.Color(0x7FD03B)},
-    // (Will need more of these)
-};
-const defaultAtomRadius = 0.5;
-const defaultAtomColor = new THREE.Color(1, 1, 1);
 
 let camera, scene, renderer, controls;
 
@@ -55,8 +45,12 @@ function init() {
     controls = new OrbitControls(camera, renderer.domElement);
     controls.addEventListener("change", render);
 
+    window.api = new Api(camera, scene, renderer, controls);
+    window.THREE = THREE;
+
     // Update camera aspect ratio on window resize
     window.addEventListener("resize", onWindowResize);
+
 
     // Open the dialog to load data if the user clicks the empty scene
     // eslint-disable-next-line no-undef
@@ -68,7 +62,7 @@ function init() {
     // Load data when file is uploaded
     function onFileUpload(files) {
         loadData(files).then(
-            system=>{
+            sections => {
                 // We can now remove this listener, since data is loaded
                 container.removeEventListener("click", openDataLoadDialog);
 
@@ -78,9 +72,9 @@ function init() {
                 // Also remove the "no data" message
                 document.getElementById("noDataMessage").style.display = "none";
 
-                window.api = new Api(camera, scene, renderer, controls);
-                window.THREE = THREE;
-                onDataLoaded(system);
+                window.api.sections = sections;
+
+                onDataLoaded(sections);
             }
         );
     }
@@ -106,11 +100,11 @@ function init() {
     };
 }
 
-function onDataLoaded(system) {
+function onDataLoaded(sections) {
 
     const centreOfMass = new THREE.Vector3();
     let atomCount = 0;
-    system.forEach(s=>s.atoms.forEach(a=>{
+    sections.forEach(s=>s.atoms.forEach(a=>{
         centreOfMass.add(a.position);
         atomCount++;
     }));
@@ -121,7 +115,7 @@ function onDataLoaded(system) {
 
     // Draw atoms
 
-    const atomElements = system.flatMap(s=>s.atoms).map(a=>{
+    const atomElements = sections.flatMap(s=>s.atoms).map(a=>{
         let atomConst = atomConstants[a.symbol];
         if (atomConst === undefined) {
             atomConst = {
@@ -156,7 +150,7 @@ function onDataLoaded(system) {
     // Draw bonds
 
     const bondRadius = 0.125;
-    const bondElements = system.flatMap(s=>s.bonds).map(b=>{
+    const bondElements = sections.flatMap(s=>s.bonds).map(b=>{
         return {
             // Position between atoms
             position: b.atom1.position.clone().add(b.atom2.position).divideScalar(2),

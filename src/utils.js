@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import {GLTFExporter} from "three/addons/exporters/GLTFExporter.js";
 
 function notify(message, type) {
     // eslint-disable-next-line no-undef
@@ -8,44 +7,12 @@ function notify(message, type) {
     });
 }
 
-function randItem(array){
-    return array[Math.floor(Math.random() * array.length)];
-}
-
 const emptyElem = {
     position: new THREE.Vector3(),
     quaternion: new THREE.Quaternion(),
     scale: new THREE.Vector3(),
     color: new THREE.Color()
 };
-
-function exportGLTF(scene, binary=false, name="scene") {
-    // Instantiate an exporter
-    let exporter = new GLTFExporter();
-    let options = {
-        binary: binary
-    };
-
-    // Removes instances (the glTF exporter cannot yet support instances
-    // and the Blender glTF importer doesn't either)
-    const deinstancedScene = deinstantiate(scene);
-
-    // Parse the input and generate the glTF output
-    exporter.parse(deinstancedScene,
-        result => {
-            if (result instanceof ArrayBuffer) {
-                saveArrayBuffer(result, `${name}.glb`);
-            } else {
-                let output = JSON.stringify(result, null, 2);
-                saveString(output, `${name}.gltf`);
-            }
-        },
-        error => {
-            console.log("An error happened during parsing", error);
-        },
-        options
-    );
-}
 
 /**
  * Recursive function to replace instanced objects (cohort trees) with ordinary meshes
@@ -102,21 +69,5 @@ function deinstantiate(object, materialMap) {
     }
 }
 
-const link = document.createElement("a");
-link.style.display = "none";
-document.body.appendChild(link); // Firefox workaround, see #6594 threejs
-function save( blob, filename ) {
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
-}
 
-function saveString( text, filename ) {
-    save(new Blob([text], {type: "text/plain"}), filename);
-}
-
-function saveArrayBuffer(buffer, filename) {
-    save(new Blob([buffer], {type: "application/octet-stream"}), filename);
-}
-
-export {notify, randItem, exportGLTF, saveString};
+export {notify, deinstantiate};

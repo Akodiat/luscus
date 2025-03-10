@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import {notify, exportGLTF} from "./utils.js";
+import {notify} from "./utils.js";
+import {exportGLTF, saveLuscusFile} from "./fileWriter.js";
 
 class Api {
     /**
@@ -15,6 +16,7 @@ class Api {
         this.scene = scene;
         this.renderer = renderer;
         this.controls = controls;
+        this.sections = [];
     }
 
     render() {
@@ -37,6 +39,10 @@ class Api {
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(canvas.width, canvas.height);
         this.render();
+    }
+
+    saveLuscusFile(name="file") {
+        saveLuscusFile(this.sections, name);
     }
 
     /**

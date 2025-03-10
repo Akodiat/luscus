@@ -1,5 +1,6 @@
 
 import {Vector3} from "three";
+import {Section} from "./section.js";
 
 /**
  * Loads data from files.
@@ -52,6 +53,7 @@ function parseSection(lines) {
     for (let j=0; j<nAtoms; j++) {
         const [atomSym, x, y, z] = splitColumns(lines[i+j]);
         const atom = {
+            sectionIdx: j+1, // Keep 1-indexed convention?
             symbol: atomSym,
             position: new Vector3(
                 parseFloat(x),
@@ -76,7 +78,9 @@ function parseSection(lines) {
         }
     }
 
-    return {atoms, bonds};
+    const section = new Section(atoms, bonds, comment);
+
+    return section;
 }
 
 // Bond order:

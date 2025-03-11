@@ -23,6 +23,13 @@ class Api {
         this.view = new View(this);
     }
 
+    /**
+     * Add a new atom
+     * @param {string} symbol
+     * @param {THREE.Vector3} position
+     * @param {Map} attributes
+     * @param {Section} section
+     */
     addAtom(symbol, position, attributes = new Map(), section) {
         if (section === undefined) {
             section = new Section();
@@ -40,6 +47,14 @@ class Api {
         this.render();
     }
 
+    /**
+     *
+     * @param {*} atom1
+     * @param {*} atom2
+     * @param {number} order
+     * @param {boolean} automatic
+     * @returns
+     */
     addBond(atom1, atom2, order, automatic) {
         if (atom1.section !== atom2.section) {
             console.error("Atoms need to belong to the same section to have a bond");
@@ -57,7 +72,14 @@ class Api {
         this.render();
     }
 
-    transformAtoms(atoms, translation, quaternion, origin) {
+    /**
+     *
+     * @param {{}[]} atoms
+     * @param {THREE.Vector3} translation
+     * @param {THREE.Quaternion} quaternion
+     * @param {THREE.Vector3} origin
+     */
+    transformAtoms(atoms, translation = new THREE.Vector3(), quaternion, origin) {
         for (const atom of atoms) {
             atom.position.add(translation);
         }
@@ -82,6 +104,9 @@ class Api {
         this.render();
     }
 
+    /**
+     * Render the scene
+     */
     render() {
         this.renderer.render(this.scene, this.camera);
     }
@@ -104,6 +129,10 @@ class Api {
         this.render();
     }
 
+    /**
+     * Save the current sections to file
+     * @param {string} name Filename
+     */
     saveLuscusFile(name="file") {
         saveLuscusFile(this.sections, name);
     }

@@ -48,6 +48,8 @@ function parseSection(lines) {
     const atoms = [];
     const bonds = [];
 
+    const section = new Section(atoms, bonds, comment);
+
     let i = 2;
 
     for (let j=0; j<nAtoms; j++) {
@@ -59,7 +61,9 @@ function parseSection(lines) {
                 parseFloat(x),
                 parseFloat(y),
                 parseFloat(z)
-            )
+            ),
+            attributes: new Map(),
+            section: section
         };
         atoms.push(atom);
     }
@@ -77,8 +81,6 @@ function parseSection(lines) {
             parseAtoms(blockLines, atoms);
         }
     }
-
-    const section = new Section(atoms, bonds, comment);
 
     return section;
 }
@@ -133,7 +135,7 @@ function parseAtoms(lines, atoms) {
         const cols = splitColumns(line);
         for (const column of cols) {
             const [key, val] = column.split("=");
-            atoms[i][key.trim()] = val;
+            atoms[i].attributes.set(key.trim(), val);
         }
     }
 }

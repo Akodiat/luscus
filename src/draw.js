@@ -46,9 +46,12 @@ function updateInstance(mesh, element, instanceId, matrix = new THREE.Matrix4())
         element.scale
     );
     mesh.setMatrixAt(instanceId, matrix);
-    mesh.setColorAt(instanceId, element.color);
     mesh.instanceMatrix.needsUpdate = true;
-    mesh.instanceColor.needsUpdate = true;
+
+    if (element.color !== undefined) {
+        mesh.setColorAt(instanceId, element.color);
+        mesh.instanceColor.needsUpdate = true;
+    }
 }
 
 export {drawInstances, updateAllInstances, updateInstance};

@@ -11,3 +11,5 @@ export const atomConstants = {
 };
 export const defaultAtomRadius = 0.5;
 export const defaultAtomColor = new Color(1, 1, 1);
+
+export const bondRadius = 0.125;

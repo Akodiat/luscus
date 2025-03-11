@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import {notify} from "./utils.js";
 import {exportGLTF, saveLuscusFile} from "./fileWriter.js";
+import { Section } from "./section.js";
+import { View } from "./view.js";
 
 class Api {
     /**
@@ -17,6 +19,67 @@ class Api {
         this.renderer = renderer;
         this.controls = controls;
         this.sections = [];
+
+        this.view = new View(this);
+    }
+
+    addAtom(symbol, position, attributes = new Map(), section) {
+        if (section === undefined) {
+            section = new Section();
+            this.sections.push(section);
+        }
+        section.atoms.push({
+            sectionIdx: section.atoms.length + 1, // Keep 1-indexed convention?
+            symbol: symbol,
+            position: position,
+            attributes: attributes,
+            section: section
+        });
+
+        this.view.redrawAtomView();
+        this.render();
+    }
+
+    addBond(atom1, atom2, order, automatic) {
+        if (atom1.section !== atom2.section) {
+            console.error("Atoms need to belong to the same section to have a bond");
+            return;
+        }
+        const section = atom1.section;
+        section.bonds.push({
+            atom1: atom1,
+            atom2: atom2,
+            order: order,
+            automatic: automatic
+        });
+
+        this.view.redrawBondView();
+        this.render();
+    }
+
+    transformAtoms(atoms, translation, quaternion, origin) {
+        for (const atom of atoms) {
+            atom.position.add(translation);
+        }
+
+        if (quaternion !== undefined) {
+            if (origin === undefined) {
+                origin = new THREE.Vector3();
+                for (const atom of atoms) {
+                    origin.add(atom.position);
+                }
+                origin.divideScalar(atoms.length);
+            }
+            for (const atom of atoms) {
+                atom.position.sub(origin);
+                atom.position.applyQuaternion(quaternion);
+                atom.position.add(origin);
+            }
+        }
+
+        this.view.updateAtomPositions(atoms);
+
+        this.render();
     }
 
     render() {

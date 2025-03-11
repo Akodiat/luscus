@@ -2,9 +2,6 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {Api} from "./src/api.js";
 import {loadData} from "./src/fileReader.js";
-import {drawInstances} from "./src/draw.js";
-import {atomConstants, defaultAtomColor, defaultAtomRadius} from "./src/constants.js";
-
 
 let camera, scene, renderer, controls;
 
@@ -72,7 +69,7 @@ function init() {
                 // Also remove the "no data" message
                 document.getElementById("noDataMessage").style.display = "none";
 
-                window.api.sections = sections;
+                window.api.sections.push(...sections);
 
                 onDataLoaded(sections);
             }
@@ -113,68 +110,8 @@ function onDataLoaded(sections) {
     controls.target.copy(centreOfMass);
     controls.update();
 
-    // Draw atoms
-
-    const atomElements = sections.flatMap(s=>s.atoms).map(a=>{
-        let atomConst = atomConstants[a.symbol];
-        if (atomConst === undefined) {
-            atomConst = {
-                radius: defaultAtomRadius,
-                color: defaultAtomColor,
-            };
-        }
-        return {
-            position: a.position,
-            quaternion: new THREE.Quaternion(),
-            scale: new THREE.Vector3(
-                atomConst.radius,
-                atomConst.radius,
-                atomConst.radius
-            ),
-            color: atomConst.color
-        };
-    });
-
-    const atomGeometry = new THREE.SphereGeometry(1, 32, 32);
-
-    const instancedAtoms = drawInstances(
-        atomGeometry,
-        atomElements,
-        new THREE.MeshStandardMaterial()
-    );
-    instancedAtoms.receiveShadow = true;
-    instancedAtoms.castShadow = true;
-
-    scene.add(instancedAtoms);
-
-    // Draw bonds
-
-    const bondRadius = 0.125;
-    const bondElements = sections.flatMap(s=>s.bonds).map(b=>{
-        return {
-            // Position between atoms
-            position: b.atom1.position.clone().add(b.atom2.position).divideScalar(2),
-            // Rotate to align with line between atoms
-            quaternion: new THREE.Quaternion().setFromUnitVectors(
-                new THREE.Vector3(0, 1, 0),
-                b.atom1.position.clone().sub(b.atom2.position).normalize()
-            ),
-            scale: new THREE.Vector3(bondRadius, b.atom1.position.distanceTo(b.atom2.position), bondRadius),
-            color: new THREE.Color(1, 1, 1)
-        };
-    });
-
-    const bondGeometry = new THREE.CylinderGeometry(1, 1, 1, 32, 32);
-
-    const instancedBonds = drawInstances(
-        bondGeometry,
-        bondElements,
-        new THREE.MeshStandardMaterial()
-    );
-    instancedBonds.receiveShadow = true;
-    instancedBonds.castShadow = true;
-
-    scene.add(instancedBonds);
+    window.api.view.redrawAtomView();
+    window.api.view.redrawBondView();
 
     // Setup directional light and point it at centre.
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);

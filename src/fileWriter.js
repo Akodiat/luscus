@@ -16,7 +16,7 @@ function saveLuscusFile(sections, name="file") {
         for (const atom of section.atoms) {
             lines.push(`  ${atom.symbol}     ${toXYZColumn(atom, "x")}     ${toXYZColumn(atom, "y")}     ${toXYZColumn(atom, "z")}`);
             // If there is anything more than id, symbol, and position
-            if (Object.keys(atom).length > 3) {
+            if (atom.attributes.size > 0) {
                 otherAtomAttr = true;
             }
         }
@@ -24,10 +24,8 @@ function saveLuscusFile(sections, name="file") {
             lines.push(" <ATOM>");
             for (const atom of section.atoms) {
                 const line = [];
-                for (const attr of Object.keys(atom)) {
-                    if (!["sectionIdx", "symbol", "position"].includes(attr)) {
-                        line.push(`${attr}=${atom[attr]}`);
-                    }
+                for (const [key, value] of atom.attributes) {
+                    line.push(`${key}=${value}`);
                 }
                 lines.push(line.join(" "));
             }

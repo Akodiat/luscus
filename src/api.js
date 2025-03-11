@@ -24,27 +24,91 @@ class Api {
     }
 
     /**
+     * Create a diamond cubic structure
+     * @param {number} side Side width in number of unit cells
+     * @param {boolean} bonds Include bonds
+     */
+    createDiamond(side=10, bonds=true) {
+        const a = 3.567;
+        const unitPoints = [
+            [0,0,0], [0,2,2], [2,0,2], [2,2,0],
+            [3,3,3], [3,1,1], [1,3,1], [1,1,3]
+        ].map(p=>new THREE.Vector3(...p));
+
+        const points = [];
+        for (let x=0; x<side; x++) {
+            for (let y=0; y<side; y++) {
+                for (let z=0; z<side; z++) {
+                    for (const p of unitPoints) {
+                        points.push(
+                            new THREE.Vector3(4*x, 4*y, 4*z).add(p)
+                        )
+                    }
+                }
+            }
+        }
+
+        const section = new Section();
+        this.sections.push(section);
+        const atoms = points.map(p=>
+            this.addAtom(
+                "C",
+                p.clone().multiplyScalar(a/4),
+                undefined,
+                section,
+                false
+            )
+        );
+
+        this.view.redrawAtomView();
+
+        if (bonds) {
+            // Not the most efficient way of doing it, I'm sure,
+            // but easy to implement
+            const distLim = 2; // Seems to be about right
+            for (let i=0; i<atoms.length; i++) {
+                for (let j=i+1; j<atoms.length; j++) {
+                    if (atoms[i].position.distanceTo(atoms[j].position) <= distLim) {
+                        this.addBond(atoms[i], atoms[j], 1, false, false);
+                    }
+                }
+            }
+
+            this.view.redrawBondView();
+        }
+
+        this.render();
+    }
+
+    /**
      * Add a new atom
      * @param {string} symbol
      * @param {THREE.Vector3} position
      * @param {Map} attributes
      * @param {Section} section
+     * @param {boolean} redraw Redraw atom view or not
      */
-    addAtom(symbol, position, attributes = new Map(), section) {
+    addAtom(symbol, position, attributes = new Map(), section, redraw=true) {
         if (section === undefined) {
             section = new Section();
             this.sections.push(section);
         }
-        section.atoms.push({
+        const atom = {
             sectionIdx: section.atoms.length + 1, // Keep 1-indexed convention?
             symbol: symbol,
             position: position,
             attributes: attributes,
             section: section
-        });
+        };
 
-        this.view.redrawAtomView();
-        this.render();
+        section.atoms.push(atom);
+
+        if (redraw) {
+            this.view.redrawAtomView();
+            this.render();
+        }
+
+        return atom
     }
 
     /**
@@ -55,7 +119,7 @@ class Api {
      * @param {boolean} automatic
      * @returns
      */
-    addBond(atom1, atom2, order, automatic) {
+    addBond(atom1, atom2, order, automatic, redraw=true) {
         if (atom1.section !== atom2.section) {
             console.error("Atoms need to belong to the same section to have a bond");
             return;
@@ -68,8 +132,10 @@ class Api {
             automatic: automatic
         });
 
-        this.view.redrawBondView();
-        this.render();
+        if (redraw) {
+            this.view.redrawBondView();
+            this.render();
+        }
     }
 
     /**

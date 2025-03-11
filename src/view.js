@@ -73,7 +73,7 @@ class View {
             };
         });
 
-        const atomGeometry = new THREE.SphereGeometry(1, 32, 32);
+        const atomGeometry = new THREE.IcosahedronGeometry(1, 3);
 
         this.instancedAtoms = drawInstances(
             atomGeometry,
@@ -105,7 +105,7 @@ class View {
             };
         });
 
-        const bondGeometry = new THREE.CylinderGeometry(1, 1, 1, 32, 32);
+        const bondGeometry = new THREE.CylinderGeometry(1, 1, 1, 8, 8);
 
         this.instancedBonds = drawInstances(
             bondGeometry,
